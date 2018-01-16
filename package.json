@@ -1,7 +1,7 @@
 {
   "name": "jsfwk",
-  "version": "0.9.9",
-  "description": "Simple minimalistic framework to build single page (SPA) apps",
+  "version": "0.9.10",
+  "description": "Simple minimalistic framework to build single page apps (SPA)",
   "main": "framework.js",
   "directories": {
     "test": "test"
@@ -17,9 +17,15 @@
     "javascript",
     "framework",
     "simple",
+    "widget",
     "widgets",
     "modules",
-    "node"
+    "node",
+    "spa",
+    "browser",
+    "app",
+    "application",
+    "apps"
   ],
   "author": "Daniel Mazurkiewicz",
   "license": "MIT",
