@@ -1,0 +1,30 @@
+{
+  "name": "jsfwk",
+  "version": "0.9.9",
+  "description": "Simple minimalistic framework to build single page (SPA) apps",
+  "main": "framework.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielMazurkiewicz/jsfwk.git"
+  },
+  "keywords": [
+    "javascript",
+    "framework",
+    "simple",
+    "widgets",
+    "modules",
+    "node"
+  ],
+  "author": "Daniel Mazurkiewicz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DanielMazurkiewicz/jsfwk/issues"
+  },
+  "homepage": "https://github.com/DanielMazurkiewicz/jsfwk#readme"
+}
