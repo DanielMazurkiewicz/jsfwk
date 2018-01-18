@@ -1,7 +1,5 @@
 'use strict'
 
-//global <-> window
-
 let styleId = 0;
 const frameworkFactory = (global, globalName) => {
   const document = global.document;
@@ -9,7 +7,7 @@ const frameworkFactory = (global, globalName) => {
   const body = document.body;
 
   const attributeOperations = {
-    $class: (element, value) => {
+    class: (element, value) => {
       if (value instanceof Array) {
         value.forEach(className => element.classList.add(className));
       } else {
@@ -17,7 +15,7 @@ const frameworkFactory = (global, globalName) => {
       }
     }
   }
-  
+
   function setPredefinedAttribute(name, operation) {
     attributeOperations[name] = operation;
   }
@@ -40,6 +38,8 @@ const frameworkFactory = (global, globalName) => {
       if (attributesVisible[name]) {
         this.$_sa(name, value);
       }
+    } else if (attributeOperations[name]) {
+      attributeOperations[name](this, value);
     } else {
       this.$_sa(name, value);
     }
@@ -67,7 +67,6 @@ const frameworkFactory = (global, globalName) => {
       this.$_ra(name);
     }
   }
-
 
   /*===============================================================*/
 
@@ -109,7 +108,18 @@ const frameworkFactory = (global, globalName) => {
         for (let attribute in argument) {
           const value = argument[attribute];
 
-          const operation = attributeOperations[attribute];
+          let operation, currentObj = element.$;
+          if (currentObj) {
+            currentObj = currentObj.av;
+            if (currentObj) {
+              currentObj = currentObj[attribute];
+            }
+          }
+
+          if (currentObj!== undefined) {
+            operation = attributeOperations[attribute];
+          }
+
           if (operation) {
             operation(element, value);
           } else {
@@ -208,6 +218,50 @@ const frameworkFactory = (global, globalName) => {
     return element;
   }
 
+  const createStyleFromObject = (style, name) => {
+    var result = '';
+    for (let media in style) {
+      const selectors = style[media];
+      let selectorText = '';
+      for (let selector in selectors) {
+        const content = selectors[selector];
+        if (name) {
+          if (selector === '!') {
+            selectorText += '.' + name + '{' + content + '}';
+          } else {
+            selectorText += '.' + name + ' ' + selector + '{' + content + '}';
+          }
+        } else if (selector !== '!') {
+            selectorText += selector + '{' + content + '}';
+        } else {
+          //TODO: throw some error, or something...
+        }
+      }
+      if (media === '!') {
+        result += selectorText;
+      } else {
+        result += '@media ' + media + '{' + selectorText + '}';
+      }
+    }
+    return result;
+  }
+
+  const createStyleFromText = (id, style, selector, media) => {
+    let result;
+    if (media) {
+      if (selector) {
+        result = '@media ' + media + '{.' + id + ' ' + selector + '{' + style + '}}';
+      } else {
+        result = '@media ' + media + '{.' + id + '{' + style + '}}';
+      }
+    } else if (selector) {
+      result = '.' + id + ' ' + selector + '{' + style + '}';
+    } else {
+      result = '.' + id + '{' + style + '}';      
+    }
+    return result;
+  }
+
   const createStyle = (style, selector, media) => {
     let id;
     if (!styleId) {
@@ -222,28 +276,30 @@ const frameworkFactory = (global, globalName) => {
       }
     }
 
-    //add style to DOM;
     const css = document.createElement('style');
-
-    if (media) {
+    if (typeof style !== 'string') {
       if (selector) {
-        css.innerHTML = '@media ' + media + '{.' + id + ' ' + selector + '{' + style + '}}';
+        css.innerHTML = createStyleFromObject(style)
       } else {
-        css.innerHTML = '@media ' + media + '{.' + id + '{' + style + '}}';
+        css.innerHTML = createStyleFromObject(style, id)
       }
-    } else if (selector) {
-      css.innerHTML = '.' + id + ' ' + selector + '{' + style + '}';
     } else {
-      css.innerHTML = '.' + id + '{' + style + '}';      
+      css.innerHTML = createStyleFromText(id, style, selector, media);
     }
+
     head.appendChild(css);
 
     styleId++;
     return id;
   }
 
+  const raiseEvent = (element, eventName, value) {
+    element.dispatchEvent(new CustomEvent(eventName, value));
+  }
+
   createElement.style = createStyle;
   createElement.attribute = setPredefinedAttribute;
+  createElement.raise = raiseEvent;
   
   if (global && globalName) global[globalName] = createElement;
   return createElement;

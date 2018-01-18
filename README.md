@@ -68,7 +68,7 @@ const myStyle = $.style(`
 Example:
 
 ```javascript
-$('div', {$class: myStyle} 
+$('div', {class: myStyle} 
   $('span', 'what', ' ', 'is', ' '),
   $('span', 'up?')
 )
