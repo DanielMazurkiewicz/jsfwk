@@ -1,6 +1,6 @@
 {
   "name": "jsfwk",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "description": "Simple extendable minimalistic framework to build single page apps (SPA)",
   "main": "framework.js",
   "directories": {

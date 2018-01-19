@@ -293,7 +293,7 @@ const frameworkFactory = (global, globalName) => {
     return id;
   }
 
-  const raiseEvent = (element, eventName, value) {
+  const raiseEvent = (element, eventName, value) => {
     element.dispatchEvent(new CustomEvent(eventName, value));
   }
 
