@@ -82,5 +82,5 @@ $('div', {class: myStyle}
 
 
 ### Check example app for code patterns:
-[Github! HTML example](https://github.com/DanielMazurkiewicz/jsfwk-app-example-html)[Working example](https://danielmazurkiewicz.github.io/jsfwk-app-example-html/bin/html/index.html)
-[Github! pure javascript example](https://github.com/DanielMazurkiewicz/jsfwk-app-example)[Working example](https://danielmazurkiewicz.github.io/jsfwk-app-example-html/bin/html/index.html)
+ * [Github! HTML example](https://github.com/DanielMazurkiewicz/jsfwk-app-example-html) [Working example](https://danielmazurkiewicz.github.io/jsfwk-app-example-html/bin/html/index.html)
+ * [Github! pure javascript example](https://github.com/DanielMazurkiewicz/jsfwk-app-example) [Working example](https://danielmazurkiewicz.github.io/jsfwk-app-example-html/bin/html/index.html)
