@@ -1,6 +1,12 @@
 # jsfwk
 Simple and minimalistic framework to build single page apps (SPA). Its aim is to keep as close as possible to existing DOM api while providing a nice layer for building interactive web pages that makes use of reusable components.
 
+### Beafore you start:
+
+There is a HTML transpiller package and HTML loader for webpack you might want to use to make your life easier ;-) and write code in HTML:
+ * Webpack loader: [npm](https://www.npmjs.com/package/jsfwk-html-webpack-loader) [github](https://github.com/DanielMazurkiewicz/jsfwk-html-webpack-loader)
+ * HTML Transpiller: [npm](https://www.npmjs.com/package/jsfwk-html-to-js-transpiller) [github](https://github.com/DanielMazurkiewicz/jsfwk-html-to-js-transpiller)
+
 ### HOW TO use it:
 
 #### STEP 1. Initialize framework library:
@@ -75,6 +81,6 @@ $('div', {class: myStyle}
 ```
 
 
-
 ### Check example app for code patterns:
-[Github!](https://github.com/DanielMazurkiewicz/jsfwk-app-example)
+[Github! HTML example](https://github.com/DanielMazurkiewicz/jsfwk-app-example-html)[Working example](https://danielmazurkiewicz.github.io/jsfwk-app-example-html/bin/html/index.html)
+[Github! pure javascript example](https://github.com/DanielMazurkiewicz/jsfwk-app-example)[Working example](https://danielmazurkiewicz.github.io/jsfwk-app-example-html/bin/html/index.html)
