@@ -227,12 +227,12 @@ const frameworkFactory = (global, globalName) => {
         const content = selectors[selector];
         if (name) {
           if (selector === '!') {
-            selectorText += '.' + name + '{' + content + '}';
+            selectorText += '.' + name + '{' + content + '} ';
           } else {
-            selectorText += '.' + name + ' ' + selector + '{' + content + '}';
+            selectorText += '.' + name + ' ' + selector + '{' + content + '} ';
           }
         } else if (selector !== '!') {
-            selectorText += selector + '{' + content + '}';
+            selectorText += selector + '{' + content + '} ';
         } else {
           //TODO: throw some error, or something...
         }
@@ -240,7 +240,7 @@ const frameworkFactory = (global, globalName) => {
       if (media === '!') {
         result += selectorText;
       } else {
-        result += '@media ' + media + '{' + selectorText + '}';
+        result += '@media ' + media + '{' + selectorText + '} ';
       }
     }
     return result;
@@ -250,14 +250,14 @@ const frameworkFactory = (global, globalName) => {
     let result;
     if (media) {
       if (selector) {
-        result = '@media ' + media + '{.' + id + ' ' + selector + '{' + style + '}}';
+        result = '@media ' + media + '{.' + id + ' ' + selector + '{' + style + '}} ';
       } else {
-        result = '@media ' + media + '{.' + id + '{' + style + '}}';
+        result = '@media ' + media + '{.' + id + '{' + style + '}} ';
       }
     } else if (selector) {
-      result = '.' + id + ' ' + selector + '{' + style + '}';
+      result = '.' + id + ' ' + selector + '{' + style + '} ';
     } else {
-      result = '.' + id + '{' + style + '}';      
+      result = '.' + id + '{' + style + '} ';      
     }
     return result;
   }
