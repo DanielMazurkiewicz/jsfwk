@@ -229,7 +229,7 @@ const frameworkFactory = (global, globalName) => {
           if (selector === '!') {
             selectorText += '.' + name + '{' + content + '} ';
           } else {
-            selectorText += '.' + name + ' ' + selector + '{' + content + '} ';
+            selectorText += '.' + name + selector + '{' + content + '} ';
           }
         } else if (selector !== '!') {
             selectorText += selector + '{' + content + '} ';
