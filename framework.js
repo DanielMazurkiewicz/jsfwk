@@ -250,12 +250,12 @@ const frameworkFactory = (global, globalName) => {
     let result;
     if (media) {
       if (selector) {
-        result = '@media ' + media + '{.' + id + ' ' + selector + '{' + style + '}} ';
+        result = '@media ' + media + '{.' + id + selector + '{' + style + '}} ';
       } else {
         result = '@media ' + media + '{.' + id + '{' + style + '}} ';
       }
     } else if (selector) {
-      result = '.' + id + ' ' + selector + '{' + style + '} ';
+      result = '.' + id + selector + '{' + style + '} ';
     } else {
       result = '.' + id + '{' + style + '} ';      
     }
