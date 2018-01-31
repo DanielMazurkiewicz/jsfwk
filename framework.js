@@ -76,7 +76,7 @@ const frameworkFactory = (global, globalName) => {
       tag = tag();
     }
 
-    if (tag instanceof HTMLElement || tag instanceof Text) {
+    if (tag instanceof HTMLElement || tag instanceof SVGElement || tag instanceof Text) {
       element = tag;
     } else {
       switch (tag) {
@@ -100,7 +100,7 @@ const frameworkFactory = (global, globalName) => {
 
       if (typeof argument === 'string') {
         element.appendChild(document.createTextNode(argument));
-      } else if (argument instanceof HTMLElement || argument instanceof Text){
+      } else if (argument instanceof HTMLElement || argument instanceof SVGElement || argument instanceof Text){
         element.appendChild(argument)
       } else if (argument instanceof Array){
         argument.forEach(e => createElement(element, e))
@@ -136,13 +136,13 @@ const frameworkFactory = (global, globalName) => {
                       contentElement = contentElement(element);
                     }
     
-                    if (contentElement instanceof HTMLElement || contentElement instanceof Text) {
+                    if (contentElement instanceof HTMLElement || contentElement instanceof SVGElement || contentElement instanceof Text) {
                       element.appendChild(contentElement, attribute);
                     } else if (contentElement !== undefined) {
                       element.appendChild(document.createTextNode(contentElement), attribute);
                     }
                   });
-                } else if (value instanceof HTMLElement || value instanceof Text) {
+                } else if (value instanceof HTMLElement || value instanceof SVGElement || value instanceof Text) {
                   element.appendChild(value, attribute);
                 } else if (value !== undefined) {
                   element.appendChild(document.createTextNode(value), attribute);
