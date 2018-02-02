@@ -6,7 +6,9 @@ const frameworkFactory = (global, globalName) => {
   const head = document.head;
   const body = document.body;
 
-  const attributeOperations = {
+  //------ predefined global attributes and tags
+
+  const customAttributes = {
     class: (element, value) => {
       if (value instanceof Array) {
         value.forEach(className => element.classList.add(className));
@@ -16,9 +18,14 @@ const frameworkFactory = (global, globalName) => {
     }
   }
 
-  function setPredefinedAttribute(name, operation) {
-    attributeOperations[name] = operation;
+  const customTags = {
+    text: a => createTextNode(a[1]),
+    body: () => body
   }
+
+  customTags.text.skipArgs = true;
+
+  //------
 
   function appendChild(child, content) {
     if (!content) content = '@content';
@@ -38,8 +45,8 @@ const frameworkFactory = (global, globalName) => {
       if (attributesVisible[name]) {
         this.$_sa(name, value);
       }
-    } else if (attributeOperations[name]) {
-      attributeOperations[name](this, value);
+    } else if (customAttributes[name]) {
+      customAttributes[name](this, value);
     } else {
       this.$_sa(name, value);
     }
@@ -71,7 +78,7 @@ const frameworkFactory = (global, globalName) => {
   /*===============================================================*/
 
   function createElement(tag) {
-    let element;
+    let element, custom;
     if (typeof tag === 'function') {
       tag = tag();
     }
@@ -79,14 +86,12 @@ const frameworkFactory = (global, globalName) => {
     if (tag instanceof HTMLElement || tag instanceof SVGElement || tag instanceof Text) {
       element = tag;
     } else {
-      switch (tag) {
-        case 'text':
-          return document.createTextNode(arguments[1]);
-        case 'body':
-          element = body;
-          break;
-        default:
-          element = document.createElement(tag);
+      custom = customTags[tag];
+      if (custom) {
+        element = custom(arguments);
+        if (custom.skipArgs) return element;        
+      } else {
+        element = document.createElement(tag);
       }
     }
 
@@ -105,26 +110,65 @@ const frameworkFactory = (global, globalName) => {
       } else if (argument instanceof Array){
         argument.forEach(e => createElement(element, e))
       } else { // assume object?
+
+        let parentFwk = element.$;
+
         for (let attribute in argument) {
           const value = argument[attribute];
 
-          let operation, currentObj = element.$;
-          if (currentObj) {
-            currentObj = currentObj.av;
-            if (currentObj) {
-              currentObj = currentObj[attribute];
+          let current;
+          if (parentFwk) {                       // first check local attributes definitions
+            current = parentFwk.av;
+            if (current && current[attribute] !== undefined) {
+              parentFwk.a[attribute] = value;
+              continue;
             }
           }
 
-          if (currentObj!== undefined) {
-            operation = attributeOperations[attribute];
-          }
+          current = customAttributes[attribute]; // then global attributes definition
+          if (current) {
+            current(element, value);
+          } else {                               // if none of above match
+            switch (attribute[0]) {              //   check first character of attribute
+              case '=':                          //    add new attribute to element
+                attribute = attribute.substr(1); //      attribute name
 
-          if (operation) {
-            operation(element, value);
-          } else {
-            let parentFwk;
-            switch (attribute[0]) {
+                if (!parentFwk) {
+                  element.$ = parentFwk = {};
+                }
+
+                if (!parentFwk.a) {
+                  parentFwk.attributes = parentFwk.a = {};
+                  parentFwk.attributesVisible = parentFwk.av = {};                    
+                  element.$_sa = element.setAttribute;
+                  element.$_ga = element.getAttribute;
+                  element.$_ra = element.removeAttribute;
+                  element.setAttribute = setAttribute;
+                  element.getAttribute = getAttribute;
+                  element.removeAttribute = removeAttribute;
+                }
+
+                let propertyConstructor;
+                if (typeof value === 'function') { // assume given function a setter
+                  propertyConstructor = {set: value}
+                } else {                           // full setter and getter object
+                  propertyConstructor = value;
+                }
+
+                if (propertyConstructor.visible) {
+                  parentFwk.av[attribute] = true;
+                } else {
+                  parentFwk.av[attribute] = false;                  
+                }
+
+                Object.defineProperty(parentFwk.a, attribute, propertyConstructor);
+                break;
+
+              case '&': //set event
+                attribute = attribute.substr(1); //event name
+                element.addEventListener(attribute, value);
+                break;
+
               case '@': //put element/elements to widget placeholder
                 if (typeof value === 'function') {
                   value = value(element);
@@ -152,9 +196,7 @@ const frameworkFactory = (global, globalName) => {
               case '+': //assign placeholder for content
                 attribute = '@' + attribute.substr(1); //replace first character
 
-                if (element.$) {
-                  parentFwk = element.$;
-                } else {
+                if (!parentFwk) {
                   element.$ = parentFwk = {};
                 }
 
@@ -167,46 +209,6 @@ const frameworkFactory = (global, globalName) => {
                 }
                 parentFwk.content[attribute] = value;
                 break;
-
-              case '=': //add new attribute to element
-                attribute = attribute.substr(1); //attribute name
-
-                if (element.$) {
-                  parentFwk = element.$;
-                } else {
-                  element.$ = parentFwk = {};
-                }
-
-                if (!parentFwk.a) {
-                  parentFwk.attributes = parentFwk.a = {};
-                  parentFwk.attributesVisible = parentFwk.av = {};                    
-                  element.$_sa = element.setAttribute;
-                  element.$_ga = element.getAttribute;
-                  element.$_ra = element.removeAttribute;
-                  element.setAttribute = setAttribute;
-                  element.getAttribute = getAttribute;
-                  element.removeAttribute = removeAttribute;
-                }
-
-                let propertyConstructor;
-                if (typeof value === 'function') {
-                  propertyConstructor = {set: value}
-                } else {
-                  propertyConstructor = value;
-                }
-
-                if (propertyConstructor.visible) {
-                  parentFwk.av[attribute] = true;
-                } else {
-                  parentFwk.av[attribute] = false;                  
-                }
-
-                Object.defineProperty(parentFwk.a, attribute, propertyConstructor);
-                break;
-
-              case '&': //set event
-                attribute = attribute.substr(1); //event name
-                element.addEventListener(attribute, value);
 
               default:
                 element.setAttribute(attribute, value);
@@ -297,8 +299,11 @@ const frameworkFactory = (global, globalName) => {
     element.dispatchEvent(new CustomEvent(eventName, value));
   }
 
+
+  createElement.tags = customTags;
+  createElement.attributes = customAttributes;
+
   createElement.style = createStyle;
-  createElement.attribute = setPredefinedAttribute;
   createElement.raise = raiseEvent;
   
   if (global && globalName) global[globalName] = createElement;
