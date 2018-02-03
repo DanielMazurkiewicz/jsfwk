@@ -304,6 +304,22 @@ const frameworkFactory = (global, globalName) => {
     element.dispatchEvent(new CustomEvent(eventName, value));
   }
 
+  const translate = (basicTranslation, translations, basicLang) => {
+    let lang = createElement.lang;
+    if (!lang || lang === basicLang || !translations) return basicTranslation;
+    if (translations[lang] !== undefined) return translations[lang];
+    let langs = createElement.langFallbacks;
+    for (let i = 0; i < langs.length; i++) {
+      lang = langs[i];
+      if (lang === basicLang) return basicTranslation;
+      if (translations[lang] !== undefined) return translations[lang];      
+    }
+    return basicTranslation;
+  }
+
+  //createElement.lang;
+  createElement.langFallbacks = [];
+  createElement.t = translate;
 
   createElement.tags = customTags;
   createElement.attributes = customAttributes;
