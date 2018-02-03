@@ -169,6 +169,11 @@ const frameworkFactory = (global, globalName) => {
                 element.addEventListener(attribute, value);
                 break;
 
+              case '*': //set event in capture mode
+                attribute = attribute.substr(1); //event name
+                element.addEventListener(attribute, value, true);
+                break;
+
               case '@': //put element/elements to widget placeholder
                 if (typeof value === 'function') {
                   value = value(element);
